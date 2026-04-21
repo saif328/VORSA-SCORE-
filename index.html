@@ -3,147 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vorsa Score</title>
+    <title>Vorsa Score - الصيانه</title>
     <style>
-        :root { --vorsa-red: #ed1c24; --bg-dark: #0a0a0a; --card-dark: #161616; }
-        body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background-color: var(--bg-dark); font-family: 'Segoe UI', Tahoma, sans-serif; }
+        :root { --vorsa-red: #ed1c24; --bg-dark: #0a0a0a; }
+        
+        body, html { 
+            margin: 0; padding: 0; height: 100%; width: 100%; 
+            overflow: hidden; background-color: var(--bg-dark); 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+        }
 
-        /* 1. شاشة الـ Splash */
-        #splash-screen {
+        /* شاشة الصيانة التي ستغطي كل شيء */
+        #maintenance-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: black; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 9999;
-            transition: opacity 0.5s ease;
+            justify-content: center; align-items: center; z-index: 99999;
+            text-align: center; padding: 20px;
         }
-        
+
         .vorsa-icon { 
-            width: 180px; height: 180px; border-radius: 50%; 
+            width: 150px; height: 150px; border-radius: 50%; 
             border: 4px solid var(--vorsa-red);
-            object-fit: cover; box-shadow: 0 0 25px rgba(237, 28, 36, 0.6);
+            object-fit: cover; box-shadow: 0 0 30px rgba(237, 28, 36, 0.6);
+            margin-bottom: 30px;
         }
+
+        h1 { color: var(--vorsa-red); font-size: 28px; margin-bottom: 10px; font-weight: 900; }
+        p { color: white; font-size: 18px; line-height: 1.6; max-width: 80%; }
         
-        #splash-screen .vorsa-icon { margin-bottom: 25px; }
-        #splash-screen h2 { color: white; font-size: 26px; letter-spacing: 3px; font-weight: 900; margin: 0; }
-
-        /* 2. الشاشة الرئيسية */
-        #home-screen {
-            display: none; height: 100%; flex-direction: column;
-            justify-content: center; align-items: center; padding: 25px;
-        }
-        
-        #home-screen .vorsa-icon {
-            width: 110px; height: 110px; 
-            border-width: 3px; margin-bottom: 15px;
+        .loading-dots:after {
+            content: ' .';
+            animation: dots 1.5s steps(5, end) infinite;
         }
 
-        .vorsa-logo-text { color: var(--vorsa-red); font-size: 32px; font-weight: 900; margin-bottom: 30px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
-        
-        .main-btn {
-            width: 90%; background: var(--card-dark); color: white; border: 2px solid var(--vorsa-red);
-            padding: 22px; margin: 10px 0; border-radius: 20px; font-size: 20px; font-weight: bold;
-            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center;
+        @keyframes dots {
+            0%, 20% { color: rgba(0,0,0,0); text-shadow: .5em 0 0 rgba(0,0,0,0), 1em 0 0 rgba(0,0,0,0); }
+            40% { color: var(--vorsa-red); text-shadow: .5em 0 0 rgba(0,0,0,0), 1em 0 0 rgba(0,0,0,0); }
+            60% { text-shadow: .5em 0 0 var(--vorsa-red), 1em 0 0 rgba(0,0,0,0); }
+            80%, 100% { text-shadow: .5em 0 0 var(--vorsa-red), 1em 0 0 var(--vorsa-red); }
         }
-
-        /* زر حول في القائمة الرئيسية */
-        .home-about-btn {
-            background: transparent; border: 1px solid #444; color: #aaa;
-            padding: 12px 30px; margin-top: 20px; border-radius: 12px; font-size: 14px;
-            cursor: pointer; transition: 0.3s;
-        }
-
-        .main-btn:active, .home-about-btn:active { transform: scale(0.92); }
-        .main-btn:active { background: var(--vorsa-red); }
-
-        /* 3. شاشة العرض */
-        #app-view { display: none; height: 100%; flex-direction: column; }
-        header { 
-            background: #000; height: 75px; display: flex; align-items: center; 
-            padding: 0 15px; border-bottom: 3px solid var(--vorsa-red); z-index: 100;
-        }
-        .header-title { flex-grow: 1; color: var(--vorsa-red); font-weight: bold; font-size: 20px; }
-        .nav-btn { background: #252525; color: white; border: none; padding: 10px 18px; border-radius: 10px; margin-left: 8px; font-weight: bold; font-size: 14px; }
-        .refresh-btn { background: var(--vorsa-red); }
-
-        iframe { width: 100%; height: calc(100% - 75px); border: none; background: white; }
-
-        /* نافذة حول */
-        .modal {
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #1a1a1a; color: white; padding: 35px; border-radius: 25px;
-            z-index: 10000; width: 85%; text-align: center; border: 2px solid var(--vorsa-red);
-        }
-        .modal h2 { color: var(--vorsa-red); margin-top: 0; font-size: 28px; }
     </style>
 </head>
 <body>
 
-<div id="splash-screen">
-    <img src="https://i.ibb.co/cS9Y8wYN/image.jpg" alt="Vorsa Logo" class="vorsa-icon">
-    <h2>VORSA SCORE</h2>
-</div>
-
-<div id="home-screen">
-    <img src="https://i.ibb.co/cS9Y8wYN/image.jpg" alt="Vorsa Logo" class="vorsa-icon">
-    <div class="vorsa-logo-text">VORSA SCORE</div>
-    
-    <button class="main-btn" onclick="openApp('https://www.yallashoot-hd.online/')">📺 مشاهدة المباريات</button>
-    <button class="main-btn" onclick="openApp('https://www.yallakora.com/match-center/')">📊 الإحصائيات والتشكيلات</button>
-    
-    <button class="home-about-btn" onclick="toggleModal()">ℹ️ حول التطبيق</button>
-</div>
-
-<div id="app-view">
-    <header>
-        <div class="header-title">VORSA SCORE</div>
-        <button class="nav-btn refresh-btn" onclick="refreshIframe()">تحديث</button>
-        <button class="nav-btn" onclick="toggleModal()">حول</button>
-        <button class="nav-btn" onclick="goBack()">رجوع</button>
-    </header>
-    <iframe id="main-frame" src=""></iframe>
-</div>
-
-<div id="aboutModal" class="modal">
-    <h2>حول التطبيق</h2>
-    <p>تم التطوير بواسطة: <b>سيف علاء</b></p>
-    <p>شركة: <b>Vorsa</b></p>
-    <p style="color: #aaa; font-size: 16px;">بالتعاون مع: <b>يلا شوت</b> و <b>Yalla Kora</b></p>
-    <button onclick="toggleModal()" style="background:var(--vorsa-red); color:white; border:none; padding:12px 30px; border-radius:12px; margin-top:20px; font-weight:bold; cursor:pointer;">إغلاق</button>
-</div>
-
-<script>
-    setTimeout(() => {
-        const splash = document.getElementById('splash-screen');
-        splash.style.opacity = '0';
-        setTimeout(() => {
-            splash.style.display = 'none';
-            document.getElementById('home-screen').style.display = 'flex';
-        }, 500);
-    }, 3000);
-
-    function openApp(url) {
-        document.getElementById('home-screen').style.display = 'none';
-        document.getElementById('app-view').style.display = 'flex';
-        document.getElementById('main-frame').src = url;
-    }
-
-    function goBack() {
-        document.getElementById('app-view').style.display = 'none';
-        document.getElementById('home-screen').style.display = 'flex';
-        document.getElementById('main-frame').src = "";
-    }
-
-    function refreshIframe() {
-        const frame = document.getElementById('main-frame');
-        const currentSrc = frame.src;
-        frame.src = ''; 
-        setTimeout(() => { frame.src = currentSrc; }, 100);
-    }
-
-    function toggleModal() {
-        const modal = document.getElementById('aboutModal');
-        modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
-    }
-</script>
+    <div id="maintenance-screen">
+        <img src="https://i.ibb.co/cS9Y8wYN/image.jpg" alt="Vorsa Logo" class="vorsa-icon">
+        
+        <h1>التطبيق في الصيانة</h1>
+        <p>نحن نقوم بتحديث <b>Vorsa Score</b> لتوفير تجربة أفضل لك.</p>
+        <p style="color: #888; font-size: 14px;">يرجى الانتظار، سنعود قريباً<span class="loading-dots"></span></p>
+        
+        <div style="margin-top: 40px; color: #444; font-size: 12px; border-top: 1px solid #222; padding-top: 10px; width: 60%;">
+            التطوير بواسطة سيف علاء - شركة Vorsa
+        </div>
+    </div>
 
 </body>
 </html>
