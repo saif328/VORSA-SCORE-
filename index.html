@@ -3,60 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vorsa Score - الصيانه</title>
+    <title>Vorsa Score Pro</title>
     <style>
-        :root { --vorsa-red: #ed1c24; --bg-dark: #0a0a0a; }
+        :root { 
+            --vorsa-blue: #007bff; 
+            --vorsa-green: #28a745;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
         
         body, html { 
             margin: 0; padding: 0; height: 100%; width: 100%; 
-            overflow: hidden; background-color: var(--bg-dark); 
-            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            overflow: hidden; background: #0a0a0a;
+            font-family: 'Segoe UI', Tahoma, sans-serif; color: white;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            text-align: center; /* توسيط كل شيء بشكل افتراضي */
         }
 
-        /* شاشة الصيانة التي ستغطي كل شيء */
-        #maintenance-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: black; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 99999;
-            text-align: center; padding: 20px;
+        .page {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: none; flex-direction: column; align-items: center;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            transition: all 0.4s ease;
+        }
+        .page.active { display: flex; animation: slideIn 0.4s forwards; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .glass-btn {
+            width: 85%; background: var(--glass-bg);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 18px; margin: 10px 0; border-radius: 20px;
+            color: white; font-size: 18px; font-weight: bold;
+            cursor: pointer; transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .glass-btn:active { background: var(--vorsa-blue); transform: scale(0.96); }
+
+        /* صفحة حول الكاملة المنسقة */
+        #about-page { 
+            background: #0f0f0f; display: none; padding: 20px; 
+            overflow-y: auto; text-align: center; /* توسيط نصوص صفحة حول */
+        }
+        #about-page.active { display: block; }
+
+        .about-header { 
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 25px; border-bottom: 1px solid #333; padding-bottom: 15px; 
         }
 
-        .vorsa-icon { 
-            width: 150px; height: 150px; border-radius: 50%; 
-            border: 4px solid var(--vorsa-red);
-            object-fit: cover; box-shadow: 0 0 30px rgba(237, 28, 36, 0.6);
-            margin-bottom: 30px;
+        .section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px; padding: 15px; margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; align-items: center;
         }
 
-        h1 { color: var(--vorsa-red); font-size: 28px; margin-bottom: 10px; font-weight: 900; }
-        p { color: white; font-size: 18px; line-height: 1.6; max-width: 80%; }
+        .section-title { 
+            color: var(--vorsa-blue); font-size: 19px; font-weight: bold;
+            margin-bottom: 10px; padding-bottom: 5px;
+            border-bottom: 2px solid var(--vorsa-blue); /* خط تحت العنوان للتميز */
+        }
+
+        .content-text { 
+            color: #ccc; font-size: 14.5px; line-height: 1.8; margin: 0;
+            text-align: center; /* تأكيد التوسيط */
+        }
         
-        .loading-dots:after {
-            content: ' .';
-            animation: dots 1.5s steps(5, end) infinite;
-        }
+        .update-item { color: var(--vorsa-green); font-weight: bold; margin-bottom: 5px; display: block; }
 
-        @keyframes dots {
-            0%, 20% { color: rgba(0,0,0,0); text-shadow: .5em 0 0 rgba(0,0,0,0), 1em 0 0 rgba(0,0,0,0); }
-            40% { color: var(--vorsa-red); text-shadow: .5em 0 0 rgba(0,0,0,0), 1em 0 0 rgba(0,0,0,0); }
-            60% { text-shadow: .5em 0 0 var(--vorsa-red), 1em 0 0 rgba(0,0,0,0); }
-            80%, 100% { text-shadow: .5em 0 0 var(--vorsa-red), 1em 0 0 var(--vorsa-red); }
+        .back-btn {
+            background: var(--glass-bg); border: 1px solid white; color: white;
+            padding: 8px 18px; border-radius: 10px; font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-    <div id="maintenance-screen">
-        <img src="https://i.ibb.co/cS9Y8wYN/image.jpg" alt="Vorsa Logo" class="vorsa-icon">
-        
-        <h1>التطبيق في الصيانة</h1>
-        <p>نحن نقوم بتحديث <b>Vorsa Score</b> لتوفير تجربة أفضل لك.</p>
-        <p style="color: #888; font-size: 14px;">يرجى الانتظار، سنعود قريباً<span class="loading-dots"></span></p>
-        
-        <div style="margin-top: 40px; color: #444; font-size: 12px; border-top: 1px solid #222; padding-top: 10px; width: 60%;">
-            التطوير بواسطة سيف علاء - شركة Vorsa
-        </div>
+<div id="splash-screen" class="page active" style="justify-content: center;">
+    <img src="https://i.ibb.co/cS9Y8wYN/image.jpg" style="width:120px; border-radius:50%; border:3px solid var(--vorsa-blue); box-shadow:0 0 20px var(--vorsa-blue);">
+    <h2 style="margin-top:20px;">Vorsa Score Pro</h2>
+</div>
+
+<div id="home-screen" class="page" style="justify-content: center;">
+    <img src="https://i.ibb.co/cS9Y8wYN/image.jpg" style="width:75px; margin-bottom:15px;">
+    <h1 style="font-size:22px; margin-bottom:30px; font-weight:900;">VORSA SCORE</h1>
+    <button class="glass-btn" onclick="openApp('https://www.yallashoot-hd.online/')">📺 مشاهدة المباريات</button>
+    <button class="glass-btn" style="border-left: 5px solid var(--vorsa-green);" onclick="openApp('https://www.yallakora.com/match-center/')">📊 الإحصائيات والنتائج</button>
+    <button class="glass-btn" onclick="showPage('about-page')">ℹ️ حول والسياسات</button>
+</div>
+
+<div id="about-page" class="page">
+    <div class="about-header">
+        <h2 style="margin:0; font-size:20px;">تفاصيل التطبيق</h2>
+        <button class="back-btn" onclick="showPage('home-screen')">رجوع</button>
     </div>
+
+    <div class="section" style="border: 1px solid var(--vorsa-green);">
+        <span class="section-title" style="color: var(--vorsa-green); border-color: var(--vorsa-green);">✨ مميزات آخر تحديث</span>
+        <span class="update-item">تفعيل نظام الصفحات الكاملة</span>
+        <span class="update-item">تأثير التعبئة اللونية عند الضغط</span>
+        <span class="update-item">منع الزوم وحذف ذاكرة المشاهدة</span>
+        <span class="update-item">توسيط النصوص وتنسيق السياسات</span>
+    </div>
+
+    <div class="section">
+        <span class="section-title">1- المطور والشركة</span>
+        <p class="content-text">
+            تم التطوير بواسطة <b>سيف علاء</b>، مؤسس شركة <b>Vorsa</b>.<br>
+            نحن متخصصون في حلول البرمجيات، تصميم المواقع، وخدمات شحن الألعاب الرقمية.
+        </p>
+    </div>
+
+    <div class="section">
+        <span class="section-title">2- فكرة التطبيق</span>
+        <p class="content-text">
+            <b>Vorsa Score</b> صُمم ليسهل عليك الانتقال بين أكبر منصات الرياضة في واجهة واحدة سريعة ومنظمة.
+        </p>
+    </div>
+
+    <div class="section">
+        <span class="section-title">3- سياسة الاستخدام</span>
+        <p class="content-text">
+            هذا التطبيق يعمل كـ متصفح متخصص. نحن لا نستضيف أي محتوى على خوادمنا والمحتوى يخص أصحابه الأصليين.
+        </p>
+    </div>
+
+    <div class="section">
+        <span class="section-title">4- الدعم الفني</span>
+        <button class="glass-btn" style="width:100%; font-size:15px; padding:12px; background: rgba(40, 167, 69, 0.2);" onclick="window.open('https://wa.me/201213703138')">💬 واتساب: 01213703138</button>
+    </div>
+</div>
+
+<div id="app-view" class="page">
+    <header style="width:100%; height:60px; background:#000; display:flex; align-items:center; padding:0 15px; border-bottom:2px solid var(--vorsa-blue);">
+        <div style="flex-grow:1; font-weight:bold;">VORSA SCORE</div>
+        <button class="back-btn" onclick="exitApp()">خروج</button>
+    </header>
+    <iframe id="main-frame" style="width:100%; flex-grow:1; border:none; background:white;"></iframe>
+</div>
+
+<script>
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => {
+            p.classList.remove('active');
+            p.style.display = 'none';
+        });
+        const target = document.getElementById(pageId);
+        target.style.display = (pageId === 'about-page') ? 'block' : 'flex';
+        setTimeout(() => target.classList.add('active'), 10);
+    }
+
+    setTimeout(() => showPage('home-screen'), 3000);
+
+    function openApp(url) {
+        // تفريغ الفريم قبل الشحن الجديد
+        document.getElementById('main-frame').src = "about:blank";
+        setTimeout(() => {
+            document.getElementById('main-frame').src = url;
+            showPage('app-view');
+        }, 50);
+    }
+
+    function exitApp() {
+        // حذف الموقع تماماً عند الخروج حتى لا يظهر عند العودة
+        document.getElementById('main-frame').src = "about:blank";
+        showPage('home-screen');
+    }
+</script>
 
 </body>
 </html>
